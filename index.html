@@ -40,7 +40,7 @@
         .card {
             background: rgba(255, 255, 255, 0.92);
             border-radius: 18px;
-            padding: 22px 18px 24px;
+            padding: 22px 18px 28px;
             box-shadow: 0 18px 45px rgba(176, 48, 96, 0.28);
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.7);
@@ -137,6 +137,52 @@
             opacity: 0.8;
         }
 
+        /* صندوق المفاجأة */
+        .final-surprise {
+            margin-top: 22px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .flower {
+            font-size: 2.4rem;
+            line-height: 1;
+            animation: pop 0.7s ease-out forwards;
+        }
+
+        .final-text {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(0.1);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.15);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
         @media (min-width: 600px) {
             .card {
                 padding-inline: 26px;
@@ -169,6 +215,12 @@
                 <span>حكيلي كلمة حلوة كمان</span>
             </button>
 
+            <!-- المفاجأة النهائية -->
+            <div id="finalSurprise" class="final-surprise">
+                <div class="flower">🌹</div>
+                <p class="final-text">تقبّلي اعتذاراتي يا أحلى شي بحياتي 🩷</p>
+            </div>
+
             <p class="footer-text">
                 هاي الصفحة معمولة بس عشان أذكّرك قديش إنتِ غالية عليّ، حتى وإنتِ زعلانة.
             </p>
@@ -178,6 +230,9 @@
     <script>
         const messages = [
             "حتى لو أنتِ زعلانة مني، أنا لسه بحبّك نفس الشي ويمكن أكتر.",
+            "مشتاقلك فوق ما تتخيلي، وكل دعواتي إنّك توصلي وتروحي وترجعي دايمًا بخير وسلامة.",
+            "قد ما أحكي إني بحبّك، رح يضل قلبي حاسس إن الكلام قليل عليك.",
+            "قد ما أزعّلك أو أتلخبط، رح أضل أحبّك دايمًا وأتعلّم كيف أوجّعك أقل وأطبطب عليك أكثر.",
             "بعزّلك وأحترم زعلك، بس بترجّاك ما تشكي لحظة قدّيش إنتِ مهمّة عندي.",
             "لو بقدر أشيل عنك كل الأشياء اللي بتوجع قلبك، كنت عملتها من زمان.",
             "إنتِ مش مشكلة لازم تنحل، إنتِ نعمة لازم تنحافظ عليها حتى بوقت الزعل.",
@@ -188,29 +243,51 @@
             "لو في زر يمحي كل لحظة وجعتك فيها، كنت ضغطته من غير ما أفكّر.",
             "يمكن أزعل، يمكن أخبّص، بس آخر كل يوم قلبي راجع عندك.",
             "رح أضل أتعلم كيف أقدر قلبك، لحد ما أصير الشخص اللي يطمنّك مش يوجعك.",
-            "أنا مش بس بحبّك، أنا مختار أضل جنبك حتى في الأيّام الثقيلة.",
-            "كل مرة بتكوني زعلانة، بتأكد أكتر قديش يهمّني مزاجك وراحتك.",
-            "إنتِ مو محتاجة تبرّري مشاعرك، من حقّك تزعلي، ومن واجبي أسمعلك.",
-            "لو الزعل طريق، فآخره لازم يكون حضن، وأنا ناطرك عند آخر الطريق."
+            "كل مرة بتكوني زعلانة، بتأكد أكتر قديش يهمّني مزاجك وراحتك."
         ];
 
         const messageEl = document.getElementById("message");
         const btn = document.getElementById("nextMessage");
+        const finalSurprise = document.getElementById("finalSurprise");
 
-        let lastIndex = 0;
+        // ترتيب عشوائي بدون تكرار إلا بعد ما نمر على الكل
+        let order = [...messages];
+        shuffle(order);
+        let currentIndex = 0;
 
-        function getRandomIndex() {
-            let index = Math.floor(Math.random() * messages.length);
-            if (index === lastIndex) {
-                index = (index + 1) % messages.length;
+        // عدّاد الكبس
+        let clickCount = 0;
+        const CLICKS_BEFORE_FLOWER = 6; // عدّل الرقم إذا بدك الهدية تطلع قبل/بعد
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
             }
-            lastIndex = index;
-            return index;
+        }
+
+        function getNextMessage() {
+            if (currentIndex >= order.length) {
+                shuffle(order);
+                currentIndex = 0;
+            }
+            const msg = order[currentIndex];
+            currentIndex++;
+            return msg;
         }
 
         btn.addEventListener("click", () => {
-            const next = getRandomIndex();
-            messageEl.textContent = messages[next];
+            clickCount++;
+
+            // لو وصلنا لعدد الكبس المطلوب، نخفي الزر ونظهر الوردِة والاعتذار
+            if (clickCount >= CLICKS_BEFORE_FLOWER) {
+                btn.style.display = "none";
+                finalSurprise.style.display = "flex";
+                return;
+            }
+
+            const next = getNextMessage();
+            messageEl.textContent = next;
         });
     </script>
 </body>
