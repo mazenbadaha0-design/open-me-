@@ -22,19 +22,17 @@
             color: #3b1630;
         }
 
-        .overlay {
+        .screen {
             position: fixed;
             inset: 0;
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 18px 28px;
         }
 
-        .wrapper {
-            position: relative;
-            z-index: 1;
-            max-width: 480px;
-            width: 100%;
-            padding: 24px 18px 28px;
+        .hidden {
+            display: none;
         }
 
         .card {
@@ -46,6 +44,8 @@
             border: 1px solid rgba(255, 255, 255, 0.7);
             position: relative;
             overflow: hidden;
+            max-width: 480px;
+            width: 100%;
         }
 
         .card::before {
@@ -137,36 +137,26 @@
             opacity: 0.8;
         }
 
-        /* صندوق المفاجأة */
-        .final-surprise {
-            margin-top: 22px;
-            display: none;
+        /* شاشة الوردِة */
+        .flower-screen {
             flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            animation: fadeInUp 0.6s ease forwards;
+            text-align: center;
+            gap: 16px;
         }
 
-        .flower {
-            font-size: 2.4rem;
-            line-height: 1;
+        .big-flower {
+            font-size: 4rem;
             animation: pop 0.7s ease-out forwards;
         }
 
-        .final-text {
-            font-size: 0.95rem;
-            font-weight: 600;
+        .flower-text-main {
+            font-size: 1.4rem;
+            font-weight: 700;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .flower-text-sub {
+            font-size: 0.95rem;
+            opacity: 0.9;
         }
 
         @keyframes pop {
@@ -184,9 +174,6 @@
         }
 
         @media (min-width: 600px) {
-            .card {
-                padding-inline: 26px;
-            }
             .title {
                 font-size: 1.6rem;
             }
@@ -197,9 +184,9 @@
     </style>
 </head>
 <body>
-    <div class="overlay"></div>
 
-    <div class="wrapper">
+    <!-- الشاشة الأولى: الكرت والجمل -->
+    <div id="screen1" class="screen">
         <div class="card">
             <h1 class="title">لما تكوني زعلانة...</h1>
             <p class="subtitle">كبسي الزر تحت وخلي قلبي يحكي بدل لساني 🩷</p>
@@ -215,16 +202,17 @@
                 <span>حكيلي كلمة حلوة كمان</span>
             </button>
 
-            <!-- المفاجأة النهائية -->
-            <div id="finalSurprise" class="final-surprise">
-                <div class="flower">🌹</div>
-                <p class="final-text">تقبّلي اعتذاراتي يا أحلى شي بحياتي 🩷</p>
-            </div>
-
             <p class="footer-text">
                 هاي الصفحة معمولة بس عشان أذكّرك قديش إنتِ غالية عليّ، حتى وإنتِ زعلانة.
             </p>
         </div>
+    </div>
+
+    <!-- الشاشة الثانية: وردة كبيرة + اعتذار -->
+    <div id="screen2" class="screen hidden flower-screen">
+        <div class="big-flower">🌹</div>
+        <p class="flower-text-main">تقبّلي اعتذاراتي يا أحلى شي بحياتي 🩷</p>
+        <p class="flower-text-sub">ولو كل كلمة بالدنيا ما بتكفي، بظل بحاول أفرجيك قديش إنتِ مهمّة عندي.</p>
     </div>
 
     <script>
@@ -248,7 +236,8 @@
 
         const messageEl = document.getElementById("message");
         const btn = document.getElementById("nextMessage");
-        const finalSurprise = document.getElementById("finalSurprise");
+        const screen1 = document.getElementById("screen1");
+        const screen2 = document.getElementById("screen2");
 
         // ترتيب عشوائي بدون تكرار إلا بعد ما نمر على الكل
         let order = [...messages];
@@ -257,7 +246,7 @@
 
         // عدّاد الكبس
         let clickCount = 0;
-        const CLICKS_BEFORE_FLOWER = 6; // عدّل الرقم إذا بدك الهدية تطلع قبل/بعد
+        const CLICKS_BEFORE_SECOND_SCREEN = 6; // بعد كم كبسة تنتقل للوردة
 
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -279,10 +268,10 @@
         btn.addEventListener("click", () => {
             clickCount++;
 
-            // لو وصلنا لعدد الكبس المطلوب، نخفي الزر ونظهر الوردِة والاعتذار
-            if (clickCount >= CLICKS_BEFORE_FLOWER) {
-                btn.style.display = "none";
-                finalSurprise.style.display = "flex";
+            // إذا وصلنا لعدد الكبسات، ننتقل للشاشة الثانية
+            if (clickCount >= CLICKS_BEFORE_SECOND_SCREEN) {
+                screen1.classList.add("hidden");
+                screen2.classList.remove("hidden");
                 return;
             }
 
