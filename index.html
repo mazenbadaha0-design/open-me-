@@ -208,11 +208,17 @@
         </div>
     </div>
 
-    <!-- الشاشة الثانية: وردة كبيرة + اعتذار -->
+    <!-- الشاشة الثانية: وردة كبيرة + اعتذار + أغنية -->
     <div id="screen2" class="screen hidden flower-screen">
         <div class="big-flower">🌹</div>
         <p class="flower-text-main">تقبّلي اعتذاراتي يا أحلى شي بحياتي 🩷</p>
         <p class="flower-text-sub">ولو كل كلمة بالدنيا ما بتكفي، بظل بحاول أفرجيك قديش إنتِ مهمّة عندي.</p>
+
+        <!-- مشغل الأغنية (M.mp3) -->
+        <audio id="apologySong">
+            <source src="M.mp3" type="audio/mpeg" />
+            متصفحك لا يدعم تشغيل الصوت.
+        </audio>
     </div>
 
     <script>
@@ -238,15 +244,14 @@
         const btn = document.getElementById("nextMessage");
         const screen1 = document.getElementById("screen1");
         const screen2 = document.getElementById("screen2");
+        const apologySong = document.getElementById("apologySong");
 
-        // ترتيب عشوائي بدون تكرار إلا بعد ما نمر على الكل
         let order = [...messages];
         shuffle(order);
         let currentIndex = 0;
 
-        // عدّاد الكبس
         let clickCount = 0;
-        const CLICKS_BEFORE_SECOND_SCREEN = 6; // بعد كم كبسة تنتقل للوردة
+        const CLICKS_BEFORE_SECOND_SCREEN = 6; // عدّل العدد لو حاب
 
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -268,10 +273,16 @@
         btn.addEventListener("click", () => {
             clickCount++;
 
-            // إذا وصلنا لعدد الكبسات، ننتقل للشاشة الثانية
             if (clickCount >= CLICKS_BEFORE_SECOND_SCREEN) {
                 screen1.classList.add("hidden");
                 screen2.classList.remove("hidden");
+
+                if (apologySong) {
+                    apologySong.play().catch(() => {
+                        // بعض المتصفحات ممكن تمنع التشغيل، بس لأن في كليك قبلها غالبًا يمشي الحال
+                    });
+                }
+
                 return;
             }
 
