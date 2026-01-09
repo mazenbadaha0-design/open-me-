@@ -204,10 +204,17 @@
         </div>
     </div>
 
-    <!-- الشاشة الثانية: فيديو + اعتذار -->
+    <!-- الشاشة الثانية: فيديو + اعتذار (يشغّل تلقائيًا داخل المستطيل) -->
     <div id="screen2" class="screen hidden video-screen">
         <div class="video-wrapper">
-            <video id="apologyVideo" controls>
+            <video
+                id="apologyVideo"
+                autoplay
+                muted
+                playsinline
+                webkit-playsinline
+                controls
+            >
                 <source src="A..mp4" type="video/mp4" />
                 متصفحك لا يدعم تشغيل الفيديو.
             </video>
@@ -241,12 +248,13 @@
         const screen2    = document.getElementById("screen2");
         const apologyVid = document.getElementById("apologyVideo");
 
+        // نجهّز ترتيب عشوائي بدون تكرار
         let order = [...messages];
         shuffle(order);
         let currentIndex = 0;
 
-        let clickCount = 0;
-        const CLICKS_BEFORE_SECOND_SCREEN = 6; // غيّر العدد لو حاب
+        // نعرض أول جملة من الترتيب العشوائي
+        messageEl.textContent = order[currentIndex];
 
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -255,35 +263,29 @@
             }
         }
 
-        function getNextMessage() {
-            if (currentIndex >= order.length) {
-                shuffle(order);
-                currentIndex = 0;
-            }
-            const msg = order[currentIndex];
-            currentIndex++;
-            return msg;
-        }
-
         btn.addEventListener("click", () => {
-            clickCount++;
-
-            if (clickCount >= CLICKS_BEFORE_SECOND_SCREEN) {
-                screen1.classList.add("hidden");
-                screen2.classList.remove("hidden");
-
-                if (apologyVid) {
-                    apologyVid.play().catch(() => {
-                        // بعض المتصفحات يمكن تمنع التشغيل التلقائي، بس عندها كنترول تقدر تضغط تشغيل عادي
-                    });
-                }
-
+            // لو لسا فيه جمل بعد الحالية، ننتقل للجملة اللي بعدها
+            if (currentIndex < order.length - 1) {
+                currentIndex++;
+                messageEl.textContent = order[currentIndex];
                 return;
             }
 
-            const next = getNextMessage();
-            messageEl.textContent = next;
+            // إذا وصلنا لآخر جملة وتم الضغط بعدها -> نروح على الشاشة الثانية
+            screen1.classList.add("hidden");
+            screen2.classList.remove("hidden");
+
+            // نحاول نشغّل الفيديو (عادة autoplay يكفي، هذا بس احتياط)
+            if (apologyVid) {
+                apologyVid.play().catch(() => {
+                    // لو المتصفح منع التشغيل التلقائي، الفيديو جاهز بالمستطيل وهي تضغط Play
+                });
+            }
         });
+
+        function getNextMessage() {
+            // لم نعد بحاجة لهذه الدالة لكن تركتها لو حبيت توسّع لاحقًا
+        }
     </script>
 </body>
 </html>
