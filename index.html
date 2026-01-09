@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>لما تكوني زعلانة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, #ffe6f0, #f7c6d9, #f5a9c6);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3b1630;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(4px);
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 480px;
+            width: 100%;
+            padding: 24px 18px 28px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 18px;
+            padding: 22px 18px 24px;
+            box-shadow: 0 18px 45px rgba(176, 48, 96, 0.28);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(255, 160, 190, 0.35), transparent 70%);
+            top: -80px;
+            left: -40px;
+            opacity: 0.7;
+        }
+
+        .card::after {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.55), transparent 70%);
+            bottom: -120px;
+            right: -80px;
+            opacity: 0.8;
+        }
+
+        .title {
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .message-box {
+            background: rgba(255, 249, 252, 0.96);
+            border-radius: 14px;
+            padding: 16px 14px 18px;
+            margin-bottom: 20px;
+            border: 1px dashed rgba(208, 101, 140, 0.45);
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .message {
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(135deg, #f05a8c, #f48fb1);
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(208, 63, 120, 0.45);
+            transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 30px rgba(208, 63, 120, 0.55);
+            filter: brightness(1.05);
+        }
+
+        .button:active {
+            transform: translateY(1px) scale(0.99);
+            box-shadow: 0 6px 16px rgba(208, 63, 120, 0.4);
+        }
+
+        .heart {
+            font-size: 1.2rem;
+        }
+
+        .footer-text {
+            margin-top: 14px;
+            font-size: 0.82rem;
+            opacity: 0.8;
+        }
+
+        @media (min-width: 600px) {
+            .card {
+                padding-inline: 26px;
+            }
+            .title {
+                font-size: 1.6rem;
+            }
+            .message {
+                font-size: 1.05rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+
+    <div class="wrapper">
+        <div class="card">
+            <h1 class="title">لما تكوني زعلانة...</h1>
+            <p class="subtitle">كبسي الزر تحت وخلي قلبي يحكي بدل لساني 🩷</p>
+
+            <div class="message-box">
+                <p id="message" class="message">
+                    حتى لو أنتِ زعلانة مني، أنا لسه بحبّك نفس الشي ويمكن أكتر.
+                </p>
+            </div>
+
+            <button class="button" id="nextMessage">
+                <span class="heart">❤</span>
+                <span>حكيلي كلمة حلوة كمان</span>
+            </button>
+
+            <p class="footer-text">
+                هاي الصفحة معمولة بس عشان أذكّرك قديش إنتِ غالية عليّ، حتى وإنتِ زعلانة.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const messages = [
+            "حتى لو أنتِ زعلانة مني، أنا لسه بحبّك نفس الشي ويمكن أكتر.",
+            "بعزّلك وأحترم زعلك، بس بترجّاك ما تشكي لحظة قدّيش إنتِ مهمّة عندي.",
+            "لو بقدر أشيل عنك كل الأشياء اللي بتوجع قلبك، كنت عملتها من زمان.",
+            "إنتِ مش مشكلة لازم تنحل، إنتِ نعمة لازم تنحافظ عليها حتى بوقت الزعل.",
+            "مسافة الطريق ولا مسافة الزعل بيغيّروا إنك أحلى جزء من يومي.",
+            "أنا يمكن أتلخبط بالكلام، بس قلبي دايمًا واضح: مكانك جوّاته وبس.",
+            "لما صوتك يختفي عني، كل الدنيا بتصير هادية زيادة عن اللزوم.",
+            "مش طالِب ترجع تضحكي فورًا، طالِب بس تضلّي معي وإحنا نهدى سوا.",
+            "لو في زر يمحي كل لحظة وجعتك فيها، كنت ضغطته من غير ما أفكّر.",
+            "يمكن أزعل، يمكن أخبّص، بس آخر كل يوم قلبي راجع عندك.",
+            "رح أضل أتعلم كيف أقدر قلبك، لحد ما أصير الشخص اللي يطمنّك مش يوجعك.",
+            "أنا مش بس بحبّك، أنا مختار أضل جنبك حتى في الأيّام الثقيلة.",
+            "كل مرة بتكوني زعلانة، بتأكد أكتر قديش يهمّني مزاجك وراحتك.",
+            "إنتِ مو محتاجة تبرّري مشاعرك، من حقّك تزعلي، ومن واجبي أسمعلك.",
+            "لو الزعل طريق، فآخره لازم يكون حضن، وأنا ناطرك عند آخر الطريق."
+        ];
+
+        const messageEl = document.getElementById("message");
+        const btn = document.getElementById("nextMessage");
+
+        let lastIndex = 0;
+
+        function getRandomIndex() {
+            let index = Math.floor(Math.random() * messages.length);
+            if (index === lastIndex) {
+                index = (index + 1) % messages.length;
+            }
+            lastIndex = index;
+            return index;
+        }
+
+        btn.addEventListener("click", () => {
+            const next = getRandomIndex();
+            messageEl.textContent = messages[next];
+        });
+    </script>
+</body>
+</html>
